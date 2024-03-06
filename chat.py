@@ -9,6 +9,8 @@ import os
 import subprocess
 import sys
 import time
+import textwrap
+import shutil
 
 from groq import Groq
 
@@ -44,11 +46,29 @@ print(Color.RED_BOLD + "Powered by Groq LPU" + Color.RESET)
 print(Color.ORANGE + "Model: "+ model + Color.RESET)
 print()
 
+
 def simulate_typing(text, typing_speed=0.00005):
-    for char in text:
-        sys.stdout.write(char)
-        sys.stdout.flush()
-        time.sleep(typing_speed)
+    terminal_width = shutil.get_terminal_size((80, 20)).columns  # Default to 80 columns if detection fails
+    current_line_length = 0
+    
+    words = text.split(' ')  # Split the text into words
+    
+    for word in words:
+        # Check if adding the next word exceeds the terminal width
+        if current_line_length + len(word) + 1 > terminal_width:
+            sys.stdout.write('\n')  # Move to a new line
+            current_line_length = 0  # Reset current line length
+        
+        # Print the word
+        for char in word:
+            sys.stdout.write(char)
+            sys.stdout.flush()
+            time.sleep(typing_speed)
+        
+        # Print a space after the word and increment current_line_length
+        sys.stdout.write(' ')
+        current_line_length += len(word) + 1  # +1 for the space
+        
     print()  # Ensure you move to a new line after finishing the typing effect
 
 # Modified get_valid_input function to use simulate_typing for output
