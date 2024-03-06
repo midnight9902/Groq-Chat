@@ -29,5 +29,4 @@ Follow the prompts to enter the temperature and max tokens for the chat interact
 
 Make sure your computer is connected to the internet while running the chat assistant, as it requires access to the Groq API.
 
-For any questions or issues, please contact Aryan Govil at [aryan.govil@example.com](mailto:aryan.govil@example.com).
 
