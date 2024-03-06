@@ -1,6 +1,5 @@
 '''
 Created by Aryan Govil, 2024
-Synaptrix Labs Inc.
 
 '''
 #!/usr/bin/env python3
