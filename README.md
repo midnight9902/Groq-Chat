@@ -1,4 +1,4 @@
-# Chat Assistant
+# Groq Chat
 
 This chat assistant is powered by Groq LPU and developed by Aryan Govil.
 
