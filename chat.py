@@ -14,6 +14,9 @@ from groq import Groq
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
+model="mixtral-8x7b-32768"
+#model="llama2-70b-4096"
+
 class Color:
     RED = '\033[91m'
     WHITE = '\033[97m'
@@ -38,7 +41,7 @@ print("\n\n")
 print(Color.PURPLE_BOLD + "Created by Aryan Govil" + Color.RESET)
 print()
 print(Color.RED_BOLD + "Powered by Groq LPU" + Color.RESET)
-print(Color.ORANGE + "Model: mixtral-8x7b-32768" + Color.RESET)
+print(Color.ORANGE + "Model: "+ model + Color.RESET)
 print()
 
 def simulate_typing(text, typing_speed=0.00005):
@@ -100,7 +103,7 @@ def chat_interaction(client, temperature, max_tokens):
         # Make the chat completion request
         chat_completion = client.chat.completions.create(
             messages=conversation_history,
-            model="mixtral-8x7b-32768",
+            model=model,
             temperature=temperature,
             max_tokens=int(max_tokens),
         )
