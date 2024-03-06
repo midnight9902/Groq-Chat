@@ -100,6 +100,8 @@ def chat_interaction(client, temperature, max_tokens):
         
         print_green_divider()  # Print green divider after user input
         
+        start_time = time.time()  # Capture start time
+
         # Make the chat completion request
         chat_completion = client.chat.completions.create(
             messages=conversation_history,
@@ -108,9 +110,17 @@ def chat_interaction(client, temperature, max_tokens):
             max_tokens=int(max_tokens),
         )
         
+        end_time = time.time()  # Capture end time
+
         # Get the response and print it
         response_content = chat_completion.choices[0].message.content
         simulate_typing(response_content)
+
+        duration = end_time - start_time  # Calculate duration
+        estimated_tokens = len(response_content) / 4  # Estimate the number of tokens
+        tokens_per_second = estimated_tokens / duration  # Calculate tokens per second
+        
+        print(f"\033[95m\nTokens/second: {tokens_per_second:.2f}\033[0m")  # Print tokens per second
         
         print_green_divider()  # Print green divider after response
         
@@ -133,7 +143,7 @@ def main():
         temperature = get_valid_input("Enter the temperature (0.0 to 2.0): ", 0.0, 2.0)
         if temperature == '/reset':
             continue
-        max_tokens = get_valid_input("Enter the max tokens (1 to 32768): ", 1, 32768, is_float=False)
+        max_tokens = get_valid_input("Enter the max tokens (Mixtral = 32768, Llama = 4096): ", 1, 32768, is_float=False)
         if max_tokens == '/reset':
             continue
         
