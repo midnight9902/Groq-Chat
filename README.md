@@ -29,4 +29,11 @@ Follow the prompts to enter the temperature and max tokens for the chat interact
 
 Make sure your computer is connected to the internet while running the chat assistant, as it requires access to the Groq API.
 
+## Needed Features:
+
+1. Read PDFs and CSVs
+2. Store past conversations and text logs
+3. Proper user interface
+4. Better API key integration/storage
+
 
