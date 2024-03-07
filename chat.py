@@ -45,31 +45,6 @@ print(Color.RED_BOLD + "Powered by Groq LPU" + Color.RESET)
 print(Color.ORANGE + "Model: "+ model + Color.RESET)
 print()
 
-
-def simulate_typing(text, typing_speed=0.00005):
-    terminal_width = shutil.get_terminal_size((80, 20)).columns  # Default to 80 columns if detection fails
-    current_line_length = 0
-    
-    words = text.split(' ')  # Split the text into words
-    
-    for word in words:
-        # Check if adding the next word exceeds the terminal width
-        if current_line_length + len(word) + 1 > terminal_width:
-            sys.stdout.write('\n')  # Move to a new line
-            current_line_length = 0  # Reset current line length
-        
-        # Print the word
-        for char in word:
-            sys.stdout.write(char)
-            sys.stdout.flush()
-            time.sleep(typing_speed)
-        
-        # Print a space after the word and increment current_line_length
-        sys.stdout.write(' ')
-        current_line_length += len(word) + 1  # +1 for the space
-        
-    print()  # Ensure you move to a new line after finishing the typing effect
-
 # Modified get_valid_input function to use simulate_typing for output
 def get_valid_input(prompt, min_value, max_value, is_float=True):
     while True:
@@ -85,9 +60,9 @@ def get_valid_input(prompt, min_value, max_value, is_float=True):
                 return value
             else:
                 error_message = f"Please enter a value between {min_value} and {max_value}."
-                simulate_typing(error_message)  # Using simulate_typing here
+                print(error_message)  # Using simulate_typing here
         except ValueError:
-            simulate_typing("Invalid input. Please enter a numerical value.")  # And here
+            print("Invalid input. Please enter a numerical value.")  # And here
 
 def print_green_divider():
     green_start = "\033[92m"
@@ -122,25 +97,35 @@ def chat_interaction(client, temperature, max_tokens):
         start_time = time.time()  # Capture start time
 
         # Make the chat completion request
-        chat_completion = client.chat.completions.create(
+        stream = client.chat.completions.create(
             messages=conversation_history,
             model=model,
             temperature=temperature,
             max_tokens=int(max_tokens),
+            stream=True
         )
-        
-        end_time = time.time()  # Capture end time
 
         # Get the response and print it
-        response_content = chat_completion.choices[0].message.content
-        simulate_typing(response_content)
+        response_content = ''
 
-        duration = end_time - start_time  # Calculate duration
-        estimated_tokens = len(response_content) / 4  # Estimate the number of tokens
-        tokens_per_second = estimated_tokens / duration  # Calculate tokens per second
-        
-        print(f"\033[95m\nTokens/second: {tokens_per_second:.2f}\033[0m")  # Print tokens per second
-        
+        for chunk in stream:
+        # Check if chunk.choices[0].delta.content is not None before appending
+            if chunk.choices[0].delta.content is not None:
+                response_content += chunk.choices[0].delta.content
+                print(chunk.choices[0].delta.content, end="")
+            else:
+                # Handle case where content is None
+                print("", end="")
+
+        end_time = time.time()  # Capture end time
+        duration = end_time - start_time
+    
+        # Since response_content is guaranteed to be a string, split() will work as expected.
+        num_tokens = len(response_content.split()) if response_content else 0
+        tokens_per_second = num_tokens / duration if duration > 0 else 0
+        print()
+        print(f"\n\033[94mResponse Time: {duration:.2f} seconds\033[0m, \033[91mTokens Per Second: {tokens_per_second:.2f}\033[0m")
+
         print_green_divider()  # Print green divider after response
         
         # Append model's response to the conversation history
