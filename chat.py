@@ -14,6 +14,8 @@ import shutil
 from utils import Color, get_valid_input, print_green_divider, chat_interaction
 from groq import Groq
 
+os.environ['GROQ_API_KEY'] = 'YOUR API'
+
 os.system('cls' if os.name == 'nt' else 'clear')
 
 print()
